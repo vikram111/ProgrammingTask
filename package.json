@@ -1,0 +1,15 @@
+{
+  "name": "programming-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "start": "node src/index.js"
+  },
+  "author": "vikram thakur",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^27.0.6"
+  }
+}
