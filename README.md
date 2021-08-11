@@ -11,8 +11,8 @@ to analyse the information provided in a log file.
     `await ProgrammingTask.readFileContentsAsString("programming-task-example-data.log");`<br>
    Once the file is read use the DSL to extract required information<br>
                 `ProgrammingTask`<br>
-                            `.parseLogData()`<br>          
-                            `.select(["url"])`<br>
+                            `.parseLogData()`      
+                            `.select(["url"])`
                             `.unique();`
   <br>
    will yield the following
