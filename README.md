@@ -3,6 +3,9 @@ The program parses a log file in the format specified by the file ./programming-
 The code is structured in a way that the consumers can use a fluid domain specific language
 to analyse the information provided in a log file.
 
+## Programming language
+ NodeJs v14.16.0
+
 ## Sample usage.
 1. To get the list of unique URLs in the log file.<br>
     `await ProgrammingTask.readFileContentsAsString("programming-task-example-data.log");`<br>
@@ -37,6 +40,10 @@ to analyse the information provided in a log file.
   'GET /download/counter/ HTTP/1.1',
   'GET /asset.css HTTP/1.1'
 }</p>
+
+# Setting up
+1. Install dependencies by running the following command from the project root where the package.json exists <br>
+    `npm install`
 ## Running the code
 `npm start`<br>
 The above command will execute the code and print the following ouput on the console.
