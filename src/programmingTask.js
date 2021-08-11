@@ -2,6 +2,7 @@ const {readFile} = require("./utils/fileUtils");
 const NEW_LINE = "\n";
 const ITEM_SPLIT_PATTERN = /["]/gi;
 const CLEAN_PATTERN = /["\[\]]/g;
+
 const ProgrammingTask = {
     
 	fileContent: null,
@@ -16,6 +17,11 @@ const ProgrammingTask = {
         this.symbolMap = []
         this.sortedSymbolMap = null
     },
+	/**
+	 * Reads in the file and returns the output as string
+	 * @param {*} filename 
+	 * @returns 
+	 */
 	readFileContentsAsString: async function(filename="programming-task-example-data.log"){
 		try{
             this.init()
@@ -26,27 +32,55 @@ const ProgrammingTask = {
 			throw new Error("File not found error");
 		}
 	},
+	/**
+	 * Optional method to search in the string content of the file given a pattern
+	 * @param {*} pattern 
+	 * @returns 
+	 */
 	filterPattern: async function(pattern){
 		this.symbols = this.fileContent.match(pattern);
 		return this;
 	},
+	/**
+	 * Similar to the select statement in sql, used to select parsed attributes
+	 * from the log data by providing attributes to select as an array of strings
+	 * This function currently supports select one attribute but can be extended to 
+	 * select multiple
+	 * @param  {...any} attributes 
+	 * @returns 
+	 */
 	select: function(...attributes){
 		this.symbols = [];
 		if(attributes.length>0 && this.parsedLog.length>0){
 			this.symbols = this.parsedLog.flatMap(item => {
 				return attributes.map(attribute => item[attribute]);
-			}
-			);
+			});
 			return this;
+		}else{
+			throw new Error("No select attributes provided or parsedLog is empty");
 		}
 	},
+	/**
+	 * Similar to the distinct method in sql, returns the unique elements for the attribute specified
+	 * in the select clause
+	 * @returns 
+	 */
 	unique: function(){
 		let uniqueValues = new Set();
+		if(this.symbols && this.symbols.length>0){
 		for(let symbol of this.symbols){
 			uniqueValues.add(symbol);
 		}
 		return uniqueValues;
+		}else{
+			throw new Error("No attribute selected for uniqueness")
+		}
 	},
+	/**
+	 * Generates the frequency of occurence of the attribute in the select
+	 * clause
+	 * @returns 
+	 */
 	frequency: function(){
 		let frequencyMap = new Map();
 		for(let symbol of this.symbols){
@@ -60,7 +94,11 @@ const ProgrammingTask = {
 		this.symbolMap = frequencyMap;
 		return this;
 	},
-	sort: function(){
+	/**
+	 * Sorts the information selected given the order
+	 * Default order is descending
+	 */
+	sort: function(order="desc"){
 		if(this.symbolMap.size>0){
 			let tempArray = Array
 				.from(this.symbolMap.entries())
@@ -68,7 +106,11 @@ const ProgrammingTask = {
 					return {"key": element[0], "value": element[1]};
 				})
 				.sort((a,b)=>{
-					return b.value - a.value;
+					if(order === "desc"){
+						return b.value - a.value;
+					}else if(order === "asc"){
+						return a.value - b.value;
+					}
 				});
 			this.sortedSymbolMap = tempArray;
 			return this;
@@ -77,6 +119,12 @@ const ProgrammingTask = {
             throw new Error("Empty sort error");
         }
 	},
+	/**
+	 * similar to the limit function is sql, limits the results of the output to
+	 * the value specified. Currently only works post application of the sort function
+	 * @param {*} limitSpec 
+	 * @returns 
+	 */
 	limit: function(limitSpec){
 		let limitedMap = [];
 		if(limitSpec>0){
@@ -88,11 +136,24 @@ const ProgrammingTask = {
         }
 		return limitedMap;
 	},
+
+	/**
+	 * similar to groupby in sql, groups output with the provided input
+	 * @param {*} attribute 
+	 * @returns 
+	 */
 	groupBy: function(attribute){
 		this.select([attribute])
 			.frequency();
 		return this;
 	},
+
+	/**
+	 * This is main parsing function. 
+	 * It parses the log file and returns an array of objects containing key value pairs
+	 * of fields in the logs.
+	 * @returns 
+	 */
 	parseLogData: function(){
 		this.parsedLog=[];
 		try{

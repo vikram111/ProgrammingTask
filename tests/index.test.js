@@ -34,6 +34,7 @@ describe("Positive scenarios for programming task", ()=>{
 		expect(urls.symbols.length).toBe(23);
 	});
 
+
 });
 
 describe("Test end to end flow", ()=>{
@@ -78,10 +79,21 @@ describe("Test end to end flow", ()=>{
 			.groupBy("url")
 			.sort()
 			.limit(3);
-		console.table(urlFrequency);
 		expect(urlFrequency[0].key).toEqual(expect.stringContaining("GET /docs/manage-websites"));
 
 	});
+
+	test("it should returned items sorted by ascending order",()=>{
+		let searchString="intranet-analytics";
+		let urlFrequency = ProgrammingTask
+			.parseLogData()
+			.groupBy("url")
+			.sort("asc")
+			.limit(3);
+		let filteredValue = urlFrequency.filter(item => item["key"].search(searchString)!==-1);
+		
+		expect(filteredValue[0]["key"]).toEqual(expect.stringContaining(searchString));
+	})
 });
 
 
@@ -103,7 +115,7 @@ describe("Negative scenarios for programming task", ()=>{
 		}
 	});
 
-    test('sort should throw an error when there is nothing to sort', async ()=> {
+    test("sort should throw an error when there is nothing to sort", async ()=> {
         try{
             ProgrammingTask
                 .sort()
@@ -113,11 +125,27 @@ describe("Negative scenarios for programming task", ()=>{
 		}
     });
 
-    test('limit should throw an error when no limit is specified', ()=>{
+    test("limit should throw an error when no limit is specified", ()=>{
         try{
             ProgrammingTask.limit()
         }catch(e){
             expect(e.message).toBe("No Limit Specified");
         }
-    })
+    });
+
+	test("select should throw an eror when no attribute is selected", ()=>{
+		try{
+			ProgrammingTask.select()
+		}catch(e){
+			expect(e.message).toBe("No select attributes provided or parsedLog is empty");
+		}
+	});
+
+	test("expect unique to throw an error if called without a select clause",()=>{
+		try{
+			ProgrammingTask.unique();
+		}catch(e){
+			expect(e.message).toBe("No attribute selected for uniqueness");
+		}
+	})
 });

@@ -16,7 +16,7 @@ async function main(){
     let top3MostVisitedUrls = ProgrammingTask
                               .parseLogData()
                               .groupBy("url")
-                              .sort()
+                              .sort("desc")
                               .limit(3)
     console.log(OUTPUT_SEPERATOR)
     console.log("Top 3 Most Visited URLs are\n")
@@ -26,15 +26,11 @@ async function main(){
     let top3MostActiveIps = ProgrammingTask
                               .parseLogData()
                               .groupBy("ip")
-                              .sort()
+                              .sort("desc")
                               .limit(3)
     console.log(OUTPUT_SEPERATOR)
     console.log("Top 3 most active IPs are \n")
     top3MostActiveIps.forEach(url => console.log(url.key));
-    console.log(ProgrammingTask
-                            .parseLogData()                            
-                            .select(["url"])
-                            .unique());
 }
 
 main();
