@@ -53,7 +53,11 @@ const ProgrammingTask = {
 		this.symbols = [];
 		if(attributes.length>0 && this.parsedLog.length>0){
 			this.symbols = this.parsedLog.flatMap(item => {
-				return attributes.map(attribute => item[attribute]);
+				return attributes.map(attribute => {
+					let obj = {}
+					obj[attribute] = item[attribute]
+					return obj;
+				});
 			});
 			return this;
 		}else{
@@ -65,10 +69,13 @@ const ProgrammingTask = {
 	 * in the select clause
 	 * @returns 
 	 */
-	unique: function(){
+	unique: function(attribute){
 		let uniqueValues = new Set();
 		if(this.symbols && this.symbols.length>0){
-		for(let symbol of this.symbols){
+		let mappedItems = this.symbols
+							.filter(item => attribute in item)
+							.map(item => item[attribute])
+		for(let symbol of mappedItems){
 			uniqueValues.add(symbol);
 		}
 		return uniqueValues;
@@ -81,9 +88,9 @@ const ProgrammingTask = {
 	 * clause
 	 * @returns 
 	 */
-	frequency: function(){
+	frequency: function(attribute){
 		let frequencyMap = new Map();
-		for(let symbol of this.symbols){
+		for(let symbol of this.symbols.map(item => item[attribute])){
 			if(frequencyMap.has(symbol)){
 				let currVal = frequencyMap.get(symbol);
 				frequencyMap.set(symbol, currVal+1);
@@ -143,8 +150,8 @@ const ProgrammingTask = {
 	 * @returns 
 	 */
 	groupBy: function(attribute){
-		this.select([attribute])
-			.frequency();
+		this.select(attribute)
+			.frequency(attribute);
 		return this;
 	},
 

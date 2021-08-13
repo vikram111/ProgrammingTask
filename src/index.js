@@ -9,8 +9,8 @@ async function main(){
 
     let uniqueIps = ProgrammingTask
                             .parseLogData()                            
-                            .select(["ip"])
-                            .unique();
+                            .select("ip")
+                            .unique("ip");
     console.log("Number of unique Ips are", uniqueIps.size);
 
     let top3MostVisitedUrls = ProgrammingTask

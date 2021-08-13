@@ -19,11 +19,19 @@ describe("Positive scenarios for programming task", ()=>{
 
 	test("it should return unique IP addresses given a log file", ()=>{
 		let uniqueIps = ProgrammingTask
-			.parseLogData()
-			.select(["ip"])
-			.unique();
+							.parseLogData()
+							.select("ip")
+							.unique("ip");
 		expect(uniqueIps.size).toBe(11);
 	});
+
+	test("it should return selected attribute map",()=>{
+		let selectedMap = ProgrammingTask
+							.parseLogData()
+							.select("ip","url")
+							.unique("ip")
+		expect(selectedMap.size).toBe(11)
+	})
 
 	test("it should return parsed log items", () => {
 		let ips = ProgrammingTask
@@ -45,8 +53,8 @@ describe("Test end to end flow", ()=>{
 	test("it should return the number unique ips", async ()=>{
 		let uniqueIps = ProgrammingTask
 			.parseLogData()           
-			.select(["ip"])
-			.unique();
+			.select("ip")
+			.unique("ip");
                         
 		expect(uniqueIps.size).toBe(11);
 	});
@@ -54,8 +62,8 @@ describe("Test end to end flow", ()=>{
 	test("it should return the top 3 most active IP addresses", ()=>{
 		let symbolFrequency = ProgrammingTask
 			.parseLogData()
-			.select(["ip"])
-			.frequency()
+			.select("ip")
+			.frequency("ip")
 			.sort()
 			.limit(3);
 		expect(symbolFrequency[0].key).toBe("168.41.191.40");
@@ -66,7 +74,7 @@ describe("Test end to end flow", ()=>{
 		let urlFrequency = ProgrammingTask
 			.parseLogData()
 			.select(["url"])
-			.frequency()
+			.frequency("url")
 			.sort()
 			.limit(3);
 		expect(urlFrequency[0].key).toEqual(expect.stringContaining("GET /docs/manage-websites"));
@@ -143,7 +151,7 @@ describe("Negative scenarios for programming task", ()=>{
 
 	test("expect unique to throw an error if called without a select clause",()=>{
 		try{
-			ProgrammingTask.unique();
+			ProgrammingTask.unique("ip");
 		}catch(e){
 			expect(e.message).toBe("No attribute selected for uniqueness");
 		}
